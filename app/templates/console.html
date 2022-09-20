@@ -1,0 +1,149 @@
+<!-- based on dashboard.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+   <div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body" >     
+                <div class="row mb-4">
+
+                    <div class="col-lg">
+                        <label for="textarea">Console <span id="console"></span></label>
+                            <div class="my-4" style="overflow: scroll;">
+                                <pre id="text" style="height:70vh"></pre>
+                                <!-- <textarea class="form-control" placeholder="Type your script here..." id="textarea" rows="20" cols="50">text </textarea> -->
+                            </div>
+                            <!-- Form -->
+                            <div class="my-4">
+                                <input autofocus type="text" id="command" style="width: 30em";>
+                                <!-- <textarea class="form-control" placeholder="Type your script here..." id="textarea" rows="10" cols="50">{{ script_text }}</textarea> -->
+                                <button type="button" class="btn btn-success" id="button">Run</button>
+                                <button type="button" class="btn btn-info" id="reset_button">Reset</button>
+                            </div>
+                        <label for="textarea">*This is a basic shell console. For full functionality ssh pi@{{ip_addr}} <span id="console"></span></label>    
+                            <!-- <button type="submit" class="btn btn-danger" id="delete1">Delete</button>
+                            <form method="GET" action="/">
+                                <button type="submit" class="btn btn-info" id="cancel1">Cancel</button>
+                            </form> -->
+                            
+                            <!-- End of Form -->
+                       
+                        
+                    </div>
+                        
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascript %}
+<script>
+    command_history = []
+    history_pos = 0
+    curr_command = ""
+
+    text = document.getElementById("text");
+    command = document.getElementById("command");
+    run = document.getElementById("button");
+    reset = document.getElementById("reset_button");
+    run_command = function () {
+        console.log("command.value: " + command.value);
+        command_copy = command.value;
+        command.value = "";
+        // text.append("$ " + command_copy + "\n");
+        command_history.push(command_copy)
+        history_pos = 0
+    
+        const request = new XMLHttpRequest();
+        request.open('POST', "/console_run");
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.onreadystatechange = function() {
+            if (request.readyState == XMLHttpRequest.DONE) {
+                text.append(request.responseText);
+                scroll();
+            }
+        }
+        request.send(JSON.stringify({"command": command_copy}));
+    }
+    run.addEventListener("click", run_command);
+    command.addEventListener("keydown", function (e) {
+        if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+            run_command();
+        }
+        if (e.keyCode === 38) {  //checks whether the pressed key is "Up Arrow"
+            if (command_history.length > 0) {
+                if (history_pos == 0) {
+                    curr_command = command.value;
+                }
+                history_pos++;
+                if (history_pos > command_history.length) {
+                    history_pos = command_history.length;
+                }
+                command.value = command_history[command_history.length - history_pos];
+            }
+        }
+        if (e.keyCode === 40) {  //checks whether the pressed key is "Down Arrow"
+            history_pos--;
+            if (history_pos < 0) {
+                history_pos = 0;
+            } else {
+                if (history_pos == 0) {
+                    command.value = curr_command;
+                } else {
+                    command.value = command_history[command_history.length - history_pos];
+                }
+            }
+        }
+    });
+
+    scroll = function () {
+        text.scrollTop = text.scrollHeight;
+    }
+
+
+    get_output = function () {
+        const request = new XMLHttpRequest();
+        request.open('POST', "/console_run");
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.onreadystatechange = function() {
+            if (request.readyState == XMLHttpRequest.DONE) {
+                console.log(request.responseText)
+                if (request.responseText.length > 0) {
+                    text.append(request.responseText);
+                    scroll();
+                }
+            }
+        }
+        request.send(JSON.stringify({}));
+    }
+
+    var t=setInterval(get_output,5000); //get console output every 5 seconds
+
+
+    reset.addEventListener("click", function() {
+        const request = new XMLHttpRequest();
+        request.open('POST', "/console_reset");
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.onreadystatechange = function() {
+            if (request.readyState == XMLHttpRequest.DONE) {
+                text.innerText = "";
+                scroll();
+            }
+        }
+        request.send(JSON.stringify({}));
+    
+    });
+</script>
+{% endblock %}

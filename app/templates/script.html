@@ -1,0 +1,77 @@
+<!-- based on dashboard.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+   <div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">     
+                <div class="row mb-4">
+
+                    <div class="col-lg">
+
+                        <!-- Form -->
+                        <div class="my-4">
+                            <label for="textarea">Editing <span id="script_name">{{ script_name }}</span></label>
+                            <textarea class="form-control" placeholder="Type your script here..." id="textarea" rows="20" cols="50">{{ script_text }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success" id="save2">Save</button>
+                        <button type="submit" class="btn btn-danger" id="delete1">Delete</button>
+                        <form method="GET" action="/">
+                            <button type="submit" class="btn btn-info" id="cancel1">Cancel</button>
+                        </form>
+                        
+                        <!-- End of Form -->
+                        
+                    </div>
+                        
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascript %}
+    <!-- <script src="index.js"></script> -->
+    <script>
+        document.getElementById("save2").addEventListener("click", function() {
+            console.log("save script");
+            const request = new XMLHttpRequest();
+            request.open('POST', "/script_save");
+            request.setRequestHeader('Content-Type', 'application/json')
+            var data = {}
+            data['script_name'] = document.getElementById("script_name").innerText;
+            data['script_text'] = document.getElementById("textarea").value;
+            // console.log(data['script_text']);
+            request.onreadystatechange = function() {
+                window.location = "/";
+            };
+            request.send(JSON.stringify(data));
+        });
+
+        document.getElementById("delete1").addEventListener("click", function() {
+            console.log("delete script");
+            const request = new XMLHttpRequest();
+            request.open('POST', "/script_delete");
+            request.setRequestHeader('Content-Type', 'application/json')
+            var data = {}
+            data['script_name'] = document.getElementById("script_name").innerText;
+            // data['script_text'] = document.getElementById("textarea").value;
+            // console.log(data['script_text']);
+            request.onreadystatechange = function() {
+                window.location = "/";
+            };
+            request.send(JSON.stringify(data));
+        });
+    </script>
+{% endblock %}

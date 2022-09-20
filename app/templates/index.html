@@ -1,0 +1,329 @@
+<!-- based on dashboard.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4"></div>
+    <div class="row justify-content-md-center" >
+        <div class="col-12 col-sm-6 col-xl-4 mb-4">
+            <div class="card border-light shadow-sm" style="overflow: scroll;">
+                <div class="card-body" style="height: 23em;">
+                    <div class="row d-block d-xl-flex align-items-center" >
+                        <!-- <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                            <div class="icon icon-shape icon-md icon-shape-primary rounded me-4 me-sm-0"><i class="fas fa-terminal fa-lg"></i></div>
+                        </div> -->
+                        <!-- <div class="col-12 col-xl-5 px-xl-0"> -->
+                            <div class="d-none d-sm-block">
+                                <h2 class="h5">Scripts</h2> 
+                                
+                                
+                                <!-- <div class="col"> -->
+                                    <form method="GET" action="/script">
+                                        <input class="form-control" id="new_script_name" name="script_name" type="text" placeholder="New Script Name" required>
+                                <!-- </div> -->
+                               
+                                        <div class="my-4">
+                                        <button type="submit" class="btn btn-sm btn-success" id="create">Create</button>
+                                        <button type="button" class="btn btn-sm btn-primary" id="script_rescan">Rescan</button>
+                                        </div>
+                                
+                                    </form>
+                                
+                            </div>
+                            {% for script in scripts %}
+                            
+                            <div class="form-check">
+                                <button class="btn btn-xs btn-primary script_edit" type="button">Edit</button>
+                                <button type="button" class="btn btn-xs btn-secondary script_run" id="run">Run</button>
+                                <input class="form-check-input script_class" type="checkbox" value="" id="{{script.id}}" {{script.checked}}>
+                                <label class="form-check-label" for="{{script.id}}" >
+                                    {{ script.name }}
+                                </label>
+                                
+                            </div>
+                            {% endfor %}
+                            
+                        <!-- </div> -->
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-4 mb-4" >
+            <div class="card border-light shadow-sm" style="overflow: scroll;">
+                <div class="card-body" style="height: 23em;">
+                    <div class="row  row-eq-height d-block d-xl-flex align-items-center">
+                        <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                        </div>
+                        <!-- <div class="col-12 col-xl-7 px-xl-0">  -->
+                            <div class="d-none d-sm-block">
+                                <h2 class="h5">Owner Setup</h2>
+                            </div>
+                            <!-- <div class="d-block"> -->
+                                <div class="d-flex align-items-center pt-3">
+                                    <!-- <div class="icon icon-shape icon-md icon-shape-danger rounded me-3"><i class="far fa-user fa-lg"></i></div> -->
+                                    <div class="d-block">
+                                        <label class="mb-0">Password</label>
+                                        <h2 class="h6">Call in as owner and dial {{DTMF_PASSWORD}} to login, or dial 0 to ring through.</h2>
+                                        <div class="mb-4">
+                                        </div>
+                                            <!-- <div class="col-md-6 mb-3"> -->
+                                                <label for="name">Owner Number</label>
+                                                <input value="{{ json_settings.owner_number }}" class="form-control" id="owner_number" name="name2" type="text" placeholder="Enter owner phone number" required>
+                                                <div class="mb-4">
+                                                </div>
+                                                <button type="submit" class="btn btn-dark" id="save2">Save</button>
+                                            <!-- </div> -->
+                                        <!-- <label class="mb-0">Dial 1234 to on</label>
+                                        <label class="mb-0">Dial 2345 to turn off</label> -->
+                                    </div>
+                                </div>
+                                <!-- <div class="d-flex align-items-center pt-3">
+                                    <div class="icon icon-shape icon-sm icon-shape-danger rounded me-3"><i class="fas fa-thermometer-quarter"></i></div>
+                                    <div class="d-block">
+                                        <label class="mb-0">Temperature</label>
+                                        <label class="mb-0">Dial 5678 to set temperature</label>
+                                    </div>
+                                </div> -->
+                            <!-- </div> -->
+                            <!-- <small>Feb 1 - Apr 1,  <span class="icon icon-small"><span class="fas fa-globe-europe"></span></span> Worldwide</small>
+                            <div class="small mt-2">                               
+                                <span class="fas fa-angle-up text-success"></span>                                   
+                                <span class="text-success fw-bold">28.2%</span> Since last month
+                            </div> -->
+                        <!-- </div> -->
+                    <!-- </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-4 mb-4">
+            <div class="card border-light shadow-sm" style="overflow:scroll;">
+                <div class="card-body" style="height: 23em;">
+                    <div class="row row-eq-height d-block d-xl-flex align-items-center">
+                        <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                            <div class="icon icon-shape icon-md icon-shape-secondary rounded me-4"><i class="fas fa-moon w3-large"></i></div>
+                        </div>
+                        <div class="col-12 col-xl-7 px-xl-0">
+                            <h2 class="h5 mb-3">Do Not Disturb</h2>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" {% if json_settings.dont_disturb %}checked{% endif %}>
+                                <label class="form-check-label" for="flexSwitchCheckDefault">On</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" {% if json_settings.allow_faves %}checked{% endif %}>
+                                <label class="form-check-label" for="flexSwitchCheckChecked">Favorites will bypass</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked2" {% if json_settings.anyone_bypass %}checked{% endif %}>
+                                <label class="form-check-label" for="flexSwitchCheckChecked2">Anyone can dial 999 to bypass</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked1" {% if json_settings.faves_bypass %}checked{% endif %}>
+                                <label class="form-check-label" for="flexSwitchCheckChecked1">Favorites can dial 999 to bypass</label>
+                            </div>
+                            <label id="dontdisturb_message"></label>
+                            <li role="separator" class="dropdown-divider mt-4 mb-3 border-black"></li>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="block1800" {% if json_settings.block1800 %}checked{% endif %}>
+                                <label class="form-check-label" for="block1800">Block 1-800 numbers</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+        
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-6 mb-4"> <!-- col 6 change-->
+            <div class="row"style=>
+                <div class="col-12 mb-4">
+                    <div class="card border-light shadow-sm" style="height: 28em;">
+                        <div class="card-header border-bottom border-light d-flex justify-content-between" style="height: 5em; ">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                <h2 class="h5">Call Log</h2>
+                                </div>
+                                <!-- <div class="col text-right">
+                                    <a href="#" class="btn btn-sm btn-secondary">See all</a>
+                                </div> -->
+                            </div>
+                        </div>
+                        
+                            <div class="table-responsive">
+                                <table class="table align-items-center table-flush" style="overflow: scroll;">
+                                    <thead>
+                                    <tr>
+                                        <th>Phone Number</th>
+                                        <th>Sys Date Time</th>
+                                        <th>Voicemail</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="call_log_table_body">
+                                    {% for call_record in call_records %}
+                                    <tr>
+                                        <td>{{ call_record.Phone_Number }}</td>
+                                        <td>{{ call_record.System_Date_Time }}</td>
+                                        {% if call_record.Has_Voicemail %}
+                                        <td>
+                                            <button class="btn btn-sm btn-info play_voicemail_button" type="button" id="{{ call_record.S_No }}_play"><i class="fas fa-play"></i></button>
+                                            <button style="display: none;" class="btn btn-sm btn-info stop_voicemail_button" type="button" id="{{ call_record.S_No }}_stop"><i class="fas fa-stop"></i></button>
+                                        </td>
+                                        <td><button class="btn btn-sm btn-danger delete_voicemail_button" type="button" id="{{ call_record.S_No }}_delete"><i class="fas fa-trash-alt"></i></button></td>
+                                        {% else %}
+                                        <td></td>
+                                        <td></td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        
+        <div class="col-12 col-xl-6 mb-4" ><!-- col 6-->
+            <div class="col-12 px-0 mb-4" >
+                <div class="card border-light shadow-sm" style="height: 28em;" >
+                    <div class="card-header border-bottom border-light d-flex justify-content-between"style="height: 5em; " >
+                        <h2 class="h5 mb-0">Contacts</h2>
+                        <a href="#" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#modal-form" id="addnewcontact">Add New Contact</a>
+                        <!-- <a href="#" class="btn btn-sm btn-secondary">See all</a> -->
+                    </div>
+                   
+                        <div class="table"style="overflow: scroll;" >
+                            <table class="table align-items-center table-flush" >
+                                <thead>
+                                  <tr>
+                                    <th>Name</th>
+                                    <th>Number</th>
+                                    <th></th> <!-- Favorite column -->
+                                    <th></th> <!-- Blocked column -->
+                                    <th></th> <!-- Edit Button column -->
+                                    <th></th> <!-- Delete Button column -->
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                    {% for contact in contacts %}
+                                    <tr>
+                                      <td>{{ contact.contact_name }}</td>
+                                      <td>{{ contact.contact_number }}</td>
+                                      <td>{{ "Favorite" if contact.favorite == 1 else "" }}</td>
+                                      <td>{{ "Blocked" if contact.blocked == 1 else "" }}</td>
+                                      <input name="contact_id" type="hidden" value="{{ contact.id }}"></input>
+                                      <input name="ringtone" type="hidden" value="{{ contact.ringtone }}"></input>
+                                      <td>
+                                      <a href="#" id="{{ contact.contact_id }}" class="btn btn-sm btn-success editcontact" data-bs-toggle="modal" data-bs-target="#modal-form" name="edit" >Edit</a>
+                                      </td>
+                                      <td>
+                                      <a href="/delete/{{ contact.contact_id }}" class="btn btn-sm btn-danger">Delete</a>
+                                      </td>
+                                    </tr>
+                                    {% endfor %}
+                                  </tbody>
+                            </table>
+                        </div>
+
+                    
+                </div>
+            </div>
+        
+
+
+
+ <!-- Modal Content -->
+ <div class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="card border-light p-3 p-lg-4">
+                  <h2 class="h5 mb-4">Contact Information</h2>
+
+                  <form method="POST">
+                      <div class="row">
+                          <div class="col-md-6 mb-3">
+                              <div>
+                                  <label for="name">Name</label>
+                                  <input value="{{ request.form['name'] }}" class="form-control" id="name" name="name" type="text" placeholder="Enter full name" required>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="row">
+                          <div class="col-md-6 mb-3">
+                              <div class="form-group">
+                                  <label for="phone">Phone Number</label>
+                                  <input value="{{ request.form['phone'] }}" class="form-control" id="phone" name="phone" type="number" placeholder="+12-345 678 910" required>
+                              </div>
+                          </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="form-check col-md-6 mb-3">
+                                <input class="form-check-input" type="checkbox" value="" id="favorite">
+                                <label class="form-check-label" for="favorite">Favorite</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="form-check col-md-6 mb-3">
+                              <input class="form-check-input" type="checkbox" value="" id="blocked">
+                              <label class="form-check-label" for="blocked">Blocked</label>
+                          </div>
+                        </div>
+
+
+                    <div class= "btn-group mr-2 mb-2">
+                        <button id="current_ringtone" type="button" class="btn btn-primary">{{ ringtones[0] }}</button>
+                        <button id="ringtone_dropdown_toggle" type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fas fa-angle-down dropdown-arrow"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div id="ringtone_dropdown" class="dropdown-menu show" style="display: none; position: absolute; transform: translate3d(83px, 44px, 0px); top: 0px; left: 0px; will-change: transform;" x-placement="bottom-start">
+                            {% for ringtone in ringtones %}
+                            <a class="dropdown-item ringtone_dropdown_option" href="#">{{ ringtone }}</a>
+                            {% endfor %}
+                            <!-- <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Upload</a> -->
+                        </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                          <button type="submit" class="btn btn-dark" id="save">Save</button>
+                      </div>
+                    </div>
+
+                  </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Modal Content -->
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascript %}
+<script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+{% endblock %}
