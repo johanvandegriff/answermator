@@ -1,6 +1,6 @@
 # Answermator
 
-[about page](https://johanv.net/answermator/)
+[about page](https://jjv.sh/answermator/)
 
 ## SD Card Image Install
  * Download the zipped image from the [releases page](https://github.com/johanvandegriff/answermator/releases)
